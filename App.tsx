@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView } from "react-native";
 import ButtonRow from "./src/components/ButtonRow";
 import { ButtonsValue } from "./src/constants/constants";
 
@@ -93,20 +93,22 @@ export default function App() {
   return (
     <View style={styles.container}>
       <StatusBar />
-      <View style={styles.displayContainer}>
-        <Text style={styles.display}>
-          {result ? result.replace(".", ",") : "0"}
-        </Text>
-      </View>
-      <View style={styles.keyboard}>
-        {ButtonsValue.map((row, index) => (
-          <ButtonRow
-            onPress={handleClick}
-            key={`row-${index}`}
-            rowItems={row}
-          />
-        ))}
-      </View>
+      <SafeAreaView>
+        <View style={styles.displayContainer}>
+          <Text style={styles.display}>
+            {result ? result.replace(".", ",") : "0"}
+          </Text>
+        </View>
+        <View style={styles.keyboard}>
+          {ButtonsValue.map((row, index) => (
+            <ButtonRow
+              onPress={handleClick}
+              key={`row-${index}`}
+              rowItems={row}
+            />
+          ))}
+        </View>
+      </SafeAreaView>
     </View>
   );
 }
