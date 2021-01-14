@@ -76,10 +76,14 @@ export const useCalc = () => {
       setCurrent((c) => `${parseFloat(c) * -1}`);
     if (type === ButtonTypes.percentage)
       setCurrent((c) => `${parseFloat(c) * 0.01}`);
-    if (type === ButtonTypes.memoryAdd)
-      setSavedValue(
-        (saved) => `${parseFloat(saved) + parseFloat(currentValue)}`
-      );
+    if (type === ButtonTypes.memoryAdd) {
+      setSavedValue((saved) => {
+        return saved !== Values.emptyString
+          ? `${parseFloat(saved) + parseFloat(currentValue)}`
+          : `${parseFloat(currentValue)}`;
+      });
+    }
+
     if (type === ButtonTypes.memorySubstract)
       setSavedValue(
         (saved) => `${parseFloat(saved) - parseFloat(currentValue)}`
