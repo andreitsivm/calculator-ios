@@ -2,8 +2,9 @@ import { ButtonTypes, Values } from "./../constants/constants";
 import { useState } from "react";
 
 export const useCalc = () => {
-  const dotRegexp = /\.+/;
+  const containPointRegexp = /\.+/;
   const numberRegexp = /[1-9]/;
+  const startWithZeroRegexp = /^[0]/;
   const maxLength = 9;
   const maxLengthForPoint = 8;
   const initValue = "";
@@ -17,14 +18,14 @@ export const useCalc = () => {
       if (value === Values.point) {
         if (currentValue.length <= maxLengthForPoint) {
           if (
-            !dotRegexp.test(currentValue) &&
+            !containPointRegexp.test(currentValue) &&
             currentValue === Values.emptyString
           ) {
-            setCurrent(`${Values.point}${value}`);
-          } else if (dotRegexp.test(currentValue)) {
+            setCurrent(`${Values.zero}${value}`);
+          } else if (containPointRegexp.test(currentValue)) {
           }
           if (
-            !dotRegexp.test(currentValue) &&
+            !containPointRegexp.test(currentValue) &&
             currentValue !== Values.emptyString
           )
             setCurrent(`${currentValue}${value}`);
@@ -32,34 +33,29 @@ export const useCalc = () => {
       }
 
       if (numberRegexp.test(value)) setCurrent(`${currentValue}${value}`);
-      if (value === Values.zero && currentValue !== Values.emptyString)
-        setCurrent(`${currentValue}${value}`);
+      if (value === Values.zero) {
+        if (startWithZeroRegexp.test(currentValue)) {
+          return;
+        }
+        if (currentValue === Values.emptyString) {
+          setCurrent(`${value}`);
+        }
+
+        if (currentValue !== Values.emptyString) {
+          setCurrent(`${currentValue}${value}`);
+        }
+      }
     }
   };
 
   const calculate = () => {
     const current = parseFloat(currentValue);
     const prev = parseFloat(prevValue);
-    if (operator === Values.minus) {
-      setCurrent(`${prev - current}`);
-      setOperator(Values.emptyString);
-      setPrev(Values.emptyString);
-    }
-    if (operator === Values.plus) {
-      setCurrent(`${prev + current}`);
-      setOperator(Values.emptyString);
-      setPrev(Values.emptyString);
-    }
-    if (operator === Values.mult) {
-      setCurrent(`${prev * current}`);
-      setOperator(Values.emptyString);
-      setPrev(Values.emptyString);
-    }
-    if (operator === Values.division) {
-      setCurrent(`${prev / current}`);
-      setOperator(Values.emptyString);
-      setPrev(Values.emptyString);
-    }
+
+    const res = eval(`${prev}${operator}${current}`);
+    setCurrent(res);
+    setOperator(Values.emptyString);
+    setPrev(Values.emptyString);
   };
 
   const clickHandler = (type: string, value?: string) => {
