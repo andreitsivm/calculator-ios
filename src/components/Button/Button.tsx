@@ -1,37 +1,55 @@
 import React from "react";
-import { TouchableOpacity, Text, StyleSheet, Dimensions } from "react-native";
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  Dimensions,
+  GestureResponderEvent,
+} from "react-native";
 
 interface Props {
-  value: string;
-  title?: string;
-  onPress: (value: string) => void;
-  size?: number;
-  color?: string;
+  symbol: string;
+  type: string;
+  value?: string;
+  onPress: (e: GestureResponderEvent) => void;
+  doubled?: boolean;
+  color: string;
 }
+const width = Dimensions.get("window").width * 0.25;
 
-const Button: React.FC<Props> = ({ value, title, onPress, size, color }) => {
-  const scale = size ? size : 1;
-  const styles = StyleSheet.create({
-    button: {
-      backgroundColor: color ? color : "#333",
-      width: Dimensions.get("screen").width * 0.2 * scale,
-      height: Dimensions.get("screen").width * 0.2,
-      borderRadius: Dimensions.get("screen").width * 0.1,
-      justifyContent: "center",
-      alignItems: size ? "flex-start" : "center",
-      margin: 8,
-    },
-    symbol: {
-      color: "#fff",
-      fontSize: 24,
-      paddingLeft: value === "0" ? 25 : 0,
-    },
-  });
+const Button: React.FC<Props> = ({ symbol, color, onPress, doubled }) => {
   return (
-    <TouchableOpacity style={styles.button} onPress={() => onPress(value)}>
-      <Text style={styles.symbol}>{title ? title : value}</Text>
+    <TouchableOpacity
+      style={[
+        styles.button,
+        { backgroundColor: color },
+        doubled ? styles.double : null,
+      ]}
+      onPress={onPress}
+    >
+      <Text style={[styles.symbol, doubled ? { paddingLeft: 40 } : null]}>
+        {symbol}
+      </Text>
     </TouchableOpacity>
   );
 };
-
+const styles = StyleSheet.create({
+  button: {
+    flex: 1,
+    height: width - 10,
+    borderRadius: width,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+  },
+  symbol: {
+    color: "#fff",
+    fontSize: 24,
+  },
+  double: {
+    width: width * 0.5 - 10,
+    flex: 2,
+    alignItems: "flex-start",
+  },
+});
 export default Button;

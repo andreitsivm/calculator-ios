@@ -1,24 +1,26 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useContext } from "react";
+import { View, StyleSheet } from "react-native";
+import { AppContext } from "../../context/AppContext";
 import { iButton } from "../../interfaces/interfases";
-import Button from "../Button";
+import Button from "../Button/Button";
 
 interface Props {
-  rowItems: iButton[];
-  onPress: (value: string) => void;
+  row: iButton[];
 }
 
-const ButtonRow: React.FC<Props> = ({ rowItems, onPress }) => {
+const ButtonRow: React.FC<Props> = ({ row }) => {
+  const app = useContext(AppContext);
   return (
     <View style={styles.row}>
-      {rowItems.map(({ value, title, size, color }) => (
+      {row.map(({ symbol, color, type, value, doubled }) => (
         <Button
-          key={`button-${value}`}
-          color={color}
-          onPress={onPress}
-          size={size}
+          key={`button-${type}-${symbol}`}
+          onPress={() => app.clickHandler(type, value)}
+          symbol={symbol}
+          type={type}
           value={value}
-          title={title}
+          doubled={doubled}
+          color={color}
         />
       ))}
     </View>
@@ -28,7 +30,6 @@ const ButtonRow: React.FC<Props> = ({ rowItems, onPress }) => {
 const styles = StyleSheet.create({
   row: {
     flex: 1,
-    height: 50,
     flexDirection: "row",
     flexWrap: "wrap",
   },
