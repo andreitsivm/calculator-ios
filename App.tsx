@@ -1,34 +1,39 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { StyleSheet, Text, View, SafeAreaView } from "react-native";
 import { useCalc } from "./src/hooks/useCalc.hook";
 import Keyboard from "./src/components/Keyboard";
 import { AppContext } from "./src/context/AppContext";
+import { Values } from "./src/constants/constants";
 
-export default function App() {
+const App: React.FC = () => {
   const { clickHandler, currentValue } = useCalc();
   return (
     <AppContext.Provider value={{ clickHandler }}>
       <View style={styles.container}>
         <StatusBar />
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={styles.safeArea}>
           <View style={styles.displayContainer}>
             <Text style={styles.display}>
-              {currentValue === "" ? "0" : currentValue}
+              {currentValue === Values.emptyString ? Values.zero : currentValue}
             </Text>
           </View>
-          <View></View>
           <Keyboard />
         </SafeAreaView>
       </View>
     </AppContext.Provider>
   );
-}
+};
+
+export default App;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#000",
+  },
+  safeArea: {
+    flex: 1,
   },
   displayContainer: {
     flex: 2,

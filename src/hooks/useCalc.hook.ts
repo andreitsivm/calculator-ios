@@ -1,81 +1,88 @@
+import { ButtonTypes, Values } from "./../constants/constants";
 import { useState } from "react";
 
 export const useCalc = () => {
-  const [currentValue, setCurrent] = useState<string>("");
-  const [prevValue, setPrev] = useState<string>("");
-  const [savedValue, setSavedValue] = useState("0");
-  const [operator, setOperator] = useState<string>("");
-
   const dotRegexp = /\.+/;
   const numberRegexp = /[1-9]/;
+  const maxLength = 9;
+  const maxLengthForPoint = 8;
+  const initValue = "";
+  const [currentValue, setCurrent] = useState<string>(initValue);
+  const [prevValue, setPrev] = useState<string>(initValue);
+  const [savedValue, setSavedValue] = useState(initValue);
+  const [operator, setOperator] = useState<string>(initValue);
+
   const clickHandler = (type: string, value?: string) => {
-    if (type === "number" && value) {
-      if (currentValue.length <= 9) {
-        if (value === ".") {
-          if (currentValue.length <= 8) {
-            if (!dotRegexp.test(currentValue) && currentValue === "") {
-              setCurrent(`0${value}`);
+    if (type === ButtonTypes.number && value) {
+      if (currentValue.length <= maxLength) {
+        if (value === Values.point) {
+          if (currentValue.length <= maxLengthForPoint) {
+            if (
+              !dotRegexp.test(currentValue) &&
+              currentValue === Values.emptyString
+            ) {
+              setCurrent(`${Values.point}${value}`);
             } else if (dotRegexp.test(currentValue)) {
             }
-            if (!dotRegexp.test(currentValue) && currentValue !== "")
+            if (
+              !dotRegexp.test(currentValue) &&
+              currentValue !== Values.emptyString
+            )
               setCurrent(`${currentValue}${value}`);
           }
         }
 
         if (numberRegexp.test(value)) setCurrent(`${currentValue}${value}`);
-        if (value === "0" && currentValue !== "")
+        if (value === Values.zero && currentValue !== Values.emptyString)
           setCurrent(`${currentValue}${value}`);
       }
     }
-    if (type === "operator" && value) {
-      setOperator(value.toString());
+    if (type === ButtonTypes.operator && value) {
+      setOperator(value);
       setPrev(currentValue);
-      setCurrent("");
+      setCurrent(Values.emptyString);
     }
-    if (type === "clearAll") {
-      setCurrent("");
-      setPrev("");
-      setOperator("");
+    if (type === ButtonTypes.clearAll) {
+      setCurrent(Values.emptyString);
+      setPrev(Values.emptyString);
+      setOperator(Values.emptyString);
     }
-    if (type === "changeSign") setCurrent((c) => `${parseFloat(c) * -1}`);
-    if (type === "percentage") setCurrent((c) => `${parseFloat(c) * 0.01}`);
-    if (type === "m+")
+    if (type === ButtonTypes.changeSign)
+      setCurrent((c) => `${parseFloat(c) * -1}`);
+    if (type === ButtonTypes.percentage)
+      setCurrent((c) => `${parseFloat(c) * 0.01}`);
+    if (type === ButtonTypes.memoryAdd)
       setSavedValue(
         (saved) => `${parseFloat(saved) + parseFloat(currentValue)}`
       );
-    if (type === "m-")
+    if (type === ButtonTypes.memorySubstract)
       setSavedValue(
         (saved) => `${parseFloat(saved) - parseFloat(currentValue)}`
       );
-    if (type === "mr") setCurrent(savedValue);
-    if (type === "mc") setSavedValue("0");
-    if (type === "equal") {
+    if (type === ButtonTypes.memoryRead) setCurrent(savedValue);
+    if (type === ButtonTypes.memoryClear) setSavedValue(Values.emptyString);
+    if (type === ButtonTypes.equal) {
       const current = parseFloat(currentValue);
       const prev = parseFloat(prevValue);
-      if (operator === "+") {
-        setCurrent(`${prev}-${current}`);
-        setOperator("");
-        setPrev("");
-      }
-      if (operator === "+") {
-        setCurrent(`${prev + current}`);
-        setOperator("");
-        setPrev("");
-      }
-      if (operator === "-") {
+      if (operator === Values.minus) {
         setCurrent(`${prev - current}`);
-        setOperator("");
-        setPrev("");
+        setOperator(Values.emptyString);
+        setPrev(Values.emptyString);
       }
-      if (operator === "*") {
+      if (operator === Values.plus) {
+        setCurrent(`${prev + current}`);
+        setOperator(Values.emptyString);
+        setPrev(Values.emptyString);
+      }
+      if (operator === Values.mult) {
         setCurrent(`${prev * current}`);
-        setOperator("");
-        setPrev("");
+        setOperator(Values.emptyString);
+        setPrev(Values.emptyString);
       }
-      if (operator === "/") {
+      if (operator === Values.division) {
         setCurrent(`${prev / current}`);
-        setOperator("");
-        setPrev("");
+        setOperator(Values.emptyString);
+        setPrev(Values.emptyString);
       }
     }
   };

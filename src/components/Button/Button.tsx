@@ -11,7 +11,7 @@ interface Props {
   symbol: string;
   type: string;
   value?: string;
-  onPress: (e: GestureResponderEvent) => void;
+  onPress: () => void;
   doubled?: boolean;
   color: string;
 }
