@@ -102,7 +102,7 @@ export const useCalc = () => {
       setSavedValue(() => {
         return savedValue !== Values.emptyString
           ? `${parseFloat(savedValue) + parseFloat(currentValue)}`
-          : `${currentValue ? currentValue : "0"}`;
+          : `${currentValue ? currentValue : Values.zero}`;
       });
     }
 
