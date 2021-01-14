@@ -95,9 +95,9 @@ export const useCalc = () => {
       setOperator(Values.emptyString);
     }
     if (type === ButtonTypes.changeSign)
-      setCurrent((c) => `${parseFloat(c) * -1}`);
+      setCurrent((curent) => `${parseFloat(curent) * -1}`);
     if (type === ButtonTypes.percentage)
-      setCurrent((c) => `${parseFloat(c) * 0.01}`);
+      setCurrent((curent) => `${parseFloat(curent) * 0.01}`);
     if (type === ButtonTypes.memoryAdd) {
       setSavedValue(() => {
         return savedValue !== Values.emptyString
