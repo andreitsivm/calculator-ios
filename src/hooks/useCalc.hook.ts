@@ -6,9 +6,26 @@ export const useCalc = () => {
   const [savedValue, setSavedValue] = useState("0");
   const [operator, setOperator] = useState<string>("");
 
+  const dotRegexp = /\.+/;
+  const numberRegexp = /[1-9]/;
   const clickHandler = (type: string, value?: string) => {
     if (type === "number" && value) {
-      setCurrent(`${currentValue}${value}`);
+      if (currentValue.length <= 9) {
+        if (value === ".") {
+          if (currentValue.length <= 8) {
+            if (!dotRegexp.test(currentValue) && currentValue === "") {
+              setCurrent(`0${value}`);
+            } else if (dotRegexp.test(currentValue)) {
+            }
+            if (!dotRegexp.test(currentValue) && currentValue !== "")
+              setCurrent(`${currentValue}${value}`);
+          }
+        }
+
+        if (numberRegexp.test(value)) setCurrent(`${currentValue}${value}`);
+        if (value === "0" && currentValue !== "")
+          setCurrent(`${currentValue}${value}`);
+      }
     }
     if (type === "operator" && value) {
       setOperator(value.toString());

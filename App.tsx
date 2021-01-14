@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, SafeAreaView } from "react-native";
-import { useCalc } from "./src/components/hooks/useCalc.hook";
+import { useCalc } from "./src/hooks/useCalc.hook";
 import Keyboard from "./src/components/Keyboard";
 import { AppContext } from "./src/context/AppContext";
 
