@@ -10,7 +10,7 @@ export const useCalc = () => {
   const initValue = "";
   const [currentValue, setCurrent] = useState<string>(initValue);
   const [prevValue, setPrev] = useState<string>(initValue);
-  const [savedValue, setSavedValue] = useState(initValue);
+  const [savedValue, setSavedValue] = useState<string>(initValue);
   const [operator, setOperator] = useState<string>(initValue);
 
   const setNumber = (value: string) => {
@@ -32,11 +32,21 @@ export const useCalc = () => {
         }
       }
 
-      if (numberRegexp.test(value)) setCurrent(`${currentValue}${value}`);
+      if (numberRegexp.test(value)) {
+        if (currentValue && prevValue === Values.emptyString) {
+          setPrev(`${currentValue}`);
+          setCurrent(value);
+        } else if (currentValue === Values.emptyString && prevValue) {
+          setCurrent(`${currentValue}${value}`);
+        } else {
+          setCurrent(`${currentValue}${value}`);
+        }
+      }
       if (value === Values.zero) {
         if (startWithZeroRegexp.test(currentValue)) {
           return;
         }
+
         if (currentValue === Values.emptyString) {
           setCurrent(`${value}`);
         }
@@ -47,13 +57,12 @@ export const useCalc = () => {
       }
     }
   };
-
   const calculate = () => {
     const current = parseFloat(currentValue);
     const prev = parseFloat(prevValue);
 
     const res = eval(`${prev}${operator}${current}`);
-    setCurrent(res);
+    setCurrent(res.toString());
     setOperator(Values.emptyString);
     setPrev(Values.emptyString);
   };
@@ -63,9 +72,22 @@ export const useCalc = () => {
       setNumber(value);
     }
     if (type === ButtonTypes.operator && value) {
-      setOperator(value);
-      setPrev(currentValue);
-      setCurrent(Values.emptyString);
+      if (currentValue && prevValue) {
+        calculate();
+        setOperator(value);
+        setPrev(Values.emptyString);
+        setCurrent((current) => current);
+      } else if (
+        currentValue === Values.emptyString &&
+        prevValue !== Values.emptyString
+      ) {
+        setOperator(value);
+        setPrev(currentValue);
+      } else {
+        setOperator(value);
+        setPrev(currentValue);
+        setCurrent(Values.emptyString);
+      }
     }
     if (type === ButtonTypes.clearAll) {
       setCurrent(Values.emptyString);
@@ -77,10 +99,10 @@ export const useCalc = () => {
     if (type === ButtonTypes.percentage)
       setCurrent((c) => `${parseFloat(c) * 0.01}`);
     if (type === ButtonTypes.memoryAdd) {
-      setSavedValue((saved) => {
-        return saved !== Values.emptyString
-          ? `${parseFloat(saved) + parseFloat(currentValue)}`
-          : `${parseFloat(currentValue)}`;
+      setSavedValue(() => {
+        return savedValue !== Values.emptyString
+          ? `${parseFloat(savedValue) + parseFloat(currentValue)}`
+          : `${currentValue ? currentValue : "0"}`;
       });
     }
 
