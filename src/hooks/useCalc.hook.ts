@@ -1,7 +1,12 @@
 import { ButtonTypes, Values } from "./../constants/constants";
 import { useState } from "react";
 
-export const useCalc = () => {
+interface T {
+  clickHandler: (type: string, value?: string) => void;
+  currentValue: string;
+}
+
+export const useCalc = (): T => {
   const containPointRegexp = /\.+/;
   const numberRegexp = /[1-9]/;
   const startWithZeroRegexp = /^[0]/;
