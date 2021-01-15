@@ -7,11 +7,11 @@ interface T {
 }
 
 export const useCalc = (): T => {
-  const containPointRegexp = /\.+/;
+  const dotRegexp = /\.+/;
   const numberRegexp = /[1-9]/;
   const startWithZeroRegexp = /^[0]/;
-  const maxLength = 9;
-  const maxLengthForPoint = 8;
+  const maxExpressioLength = 9;
+  const maxExpressionLengthForPoint = 8;
   const initValue = "";
   const [currentValue, setCurrent] = useState<string>(initValue);
   const [prevValue, setPrev] = useState<string>(initValue);
@@ -19,18 +19,19 @@ export const useCalc = (): T => {
   const [operator, setOperator] = useState<string>(initValue);
 
   const setNumber = (value: string) => {
-    if (currentValue.length <= maxLength) {
+    if (currentValue.length <= maxExpressioLength) {
       if (value === Values.point) {
-        if (currentValue.length <= maxLengthForPoint) {
+        if (currentValue.length <= maxExpressionLengthForPoint) {
           if (
-            !containPointRegexp.test(currentValue) &&
+            !dotRegexp.test(currentValue) &&
             currentValue === Values.emptyString
           ) {
             setCurrent(`${Values.zero}${value}`);
-          } else if (containPointRegexp.test(currentValue)) {
+          }
+          if (dotRegexp.test(currentValue)) {
           }
           if (
-            !containPointRegexp.test(currentValue) &&
+            !dotRegexp.test(currentValue) &&
             currentValue !== Values.emptyString
           )
             setCurrent(`${currentValue}${value}`);

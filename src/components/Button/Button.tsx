@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  Dimensions,
-  GestureResponderEvent,
-} from "react-native";
+import { TouchableOpacity, Text, StyleSheet, Dimensions } from "react-native";
 
 interface Props {
   symbol: string;
@@ -15,6 +9,7 @@ interface Props {
   doubled?: boolean;
   color: string;
 }
+
 const width = Dimensions.get("window").width * 0.25;
 
 const Button: React.FC<Props> = ({ symbol, color, onPress, doubled }) => {

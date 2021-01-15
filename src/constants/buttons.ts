@@ -1,5 +1,5 @@
 import { Colors, ButtonTypes, Symbols, Values } from "./constants";
-import { iButton } from "../interfaces/interfases";
+import { iButton } from "../interfaces/interfaces";
 
 export const ButtonsProperties: Array<iButton[]> = [
   [

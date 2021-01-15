@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import { AppContext } from "../../context/AppContext";
-import { iButton } from "../../interfaces/interfases";
+import { iButton } from "../../interfaces/interfaces";
 import Button from "../Button/Button";
 
 interface Props {
@@ -9,13 +9,13 @@ interface Props {
 }
 
 const ButtonRow: React.FC<Props> = ({ row }) => {
-  const app = useContext(AppContext);
+  const { clickHandler } = useContext(AppContext);
   return (
     <View style={styles.row}>
       {row.map(({ symbol, color, type, value, doubled }) => (
         <Button
           key={`button-${type}-${symbol}`}
-          onPress={() => app.clickHandler(type, value)}
+          onPress={() => clickHandler(type, value)}
           symbol={symbol}
           type={type}
           value={value}
