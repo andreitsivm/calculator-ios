@@ -1,5 +1,6 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet, Dimensions } from "react-native";
+import { Colors } from "../../constants/constants";
 
 interface Props {
   symbol: string;
@@ -22,7 +23,7 @@ const Button: React.FC<Props> = ({ symbol, color, onPress, doubled }) => {
       ]}
       onPress={onPress}
     >
-      <Text style={[styles.symbol, doubled ? { paddingLeft: 40 } : null]}>
+      <Text style={[styles.text, doubled ? { paddingLeft: 40 } : null]}>
         {symbol}
       </Text>
     </TouchableOpacity>
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 5,
   },
-  symbol: {
+  text: {
     color: "#fff",
     fontSize: 24,
   },

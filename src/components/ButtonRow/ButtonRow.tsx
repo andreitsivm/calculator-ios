@@ -17,8 +17,8 @@ const ButtonRow: React.FC<Props> = ({ row }) => {
           key={`button-${type}-${symbol}`}
           onPress={() => clickHandler(type, value)}
           symbol={symbol}
-          type={type}
           value={value}
+          type={type}
           doubled={doubled}
           color={color}
         />
