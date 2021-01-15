@@ -9,7 +9,9 @@ interface T {
 export const useCalc = (): T => {
   const dotRegexp = /\.+/;
   const numberRegexp = /[1-9]/;
+
   const startWithZeroRegexp = /^[0]/;
+  const endWithPoint = /\.$/;
   const maxExpressioLength = 9;
   const maxExpressionLengthForPoint = 8;
   const initValue = "";
@@ -27,8 +29,7 @@ export const useCalc = (): T => {
             currentValue === Values.emptyString
           ) {
             setCurrent(`${Values.zero}${value}`);
-          }
-          if (dotRegexp.test(currentValue)) {
+          } else if (dotRegexp.test(currentValue)) {
           }
           if (
             !dotRegexp.test(currentValue) &&
@@ -39,14 +40,21 @@ export const useCalc = (): T => {
       }
 
       if (numberRegexp.test(value)) {
+        if (endWithPoint.test(currentValue)) {
+          setCurrent(`${currentValue}${value}`);
+          return;
+        }
         if (currentValue && prevValue === Values.emptyString) {
           setPrev(`${currentValue}`);
           setCurrent(value);
-        } else if (currentValue === Values.emptyString && prevValue) {
-          setCurrent(`${currentValue}${value}`);
-        } else {
-          setCurrent(`${currentValue}${value}`);
+          return;
         }
+        if (currentValue === Values.emptyString && prevValue) {
+          setCurrent(`${currentValue}${value}`);
+          return;
+        }
+
+        setCurrent(`${currentValue}${value}`);
       }
       if (value === Values.zero) {
         if (startWithZeroRegexp.test(currentValue)) {
