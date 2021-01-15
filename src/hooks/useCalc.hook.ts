@@ -7,13 +7,11 @@ interface T {
 }
 
 export const useCalc = (): T => {
-  const dotRegexp = /\.+/;
+  const containPointRegexp = /\.+/;
   const numberRegexp = /[1-9]/;
-
   const startWithZeroRegexp = /^[0]/;
-  const endWithPoint = /\.$/;
-  const maxExpressioLength = 9;
-  const maxExpressionLengthForPoint = 8;
+  const maxLength = 9;
+  const maxLengthForPoint = 8;
   const initValue = "";
   const [currentValue, setCurrent] = useState<string>(initValue);
   const [prevValue, setPrev] = useState<string>(initValue);
@@ -21,39 +19,21 @@ export const useCalc = (): T => {
   const [operator, setOperator] = useState<string>(initValue);
 
   const setNumber = (value: string) => {
-    if (currentValue.length <= maxExpressioLength) {
+    if (currentValue.length <= maxLength) {
       if (value === Values.point) {
-        if (currentValue.length <= maxExpressionLengthForPoint) {
+        if (currentValue.length <= maxLengthForPoint) {
           if (
-            !dotRegexp.test(currentValue) &&
+            !containPointRegexp.test(currentValue) &&
             currentValue === Values.emptyString
           ) {
             setCurrent(`${Values.zero}${value}`);
-          } else if (dotRegexp.test(currentValue)) {
+            return;
           }
-          if (
-            !dotRegexp.test(currentValue) &&
-            currentValue !== Values.emptyString
-          )
-            setCurrent(`${currentValue}${value}`);
+          setCurrent(`${currentValue}${value}`);
         }
       }
 
       if (numberRegexp.test(value)) {
-        if (endWithPoint.test(currentValue)) {
-          setCurrent(`${currentValue}${value}`);
-          return;
-        }
-        if (currentValue && prevValue === Values.emptyString) {
-          setPrev(`${currentValue}`);
-          setCurrent(value);
-          return;
-        }
-        if (currentValue === Values.emptyString && prevValue) {
-          setCurrent(`${currentValue}${value}`);
-          return;
-        }
-
         setCurrent(`${currentValue}${value}`);
       }
       if (value === Values.zero) {
@@ -63,10 +43,12 @@ export const useCalc = (): T => {
 
         if (currentValue === Values.emptyString) {
           setCurrent(`${value}`);
+          return;
         }
 
         if (currentValue !== Values.emptyString) {
           setCurrent(`${currentValue}${value}`);
+          return;
         }
       }
     }
@@ -86,22 +68,9 @@ export const useCalc = (): T => {
       setNumber(value);
     }
     if (type === ButtonTypes.operator && value) {
-      if (currentValue && prevValue) {
-        calculate();
-        setOperator(value);
-        setPrev(Values.emptyString);
-        setCurrent((current) => current);
-      } else if (
-        currentValue === Values.emptyString &&
-        prevValue !== Values.emptyString
-      ) {
-        setOperator(value);
-        setPrev(currentValue);
-      } else {
-        setOperator(value);
-        setPrev(currentValue);
-        setCurrent(Values.emptyString);
-      }
+      setOperator(value);
+      setPrev(currentValue);
+      setCurrent(Values.emptyString);
     }
     if (type === ButtonTypes.clearAll) {
       setCurrent(Values.emptyString);
