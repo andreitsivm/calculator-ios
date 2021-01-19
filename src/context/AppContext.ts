@@ -1,5 +1,6 @@
+import { EventType } from "./../interfaces/interfaces";
 import { createContext } from "react";
 
 export const AppContext = createContext({
-  clickHandler: (type: string, value?: string) => {},
+  clickHandler: (type: EventType, value?: string) => {},
 });

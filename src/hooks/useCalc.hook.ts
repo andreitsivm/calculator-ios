@@ -1,103 +1,121 @@
+import { EventType, iEventKeyTypes } from "./../interfaces/interfaces";
 import { ButtonTypes, Values } from "./../constants/constants";
 import { useState } from "react";
 
 interface T {
-  clickHandler: (type: string, value?: string) => void;
+  clickHandler: (type: EventType, value?: string) => void;
   currentValue: string;
 }
 
 export const useCalc = (): T => {
   const containPointRegexp = /\.+/;
-  const numberRegexp = /[1-9]/;
   const startWithZeroRegexp = /^[0]/;
   const maxLength = 9;
   const maxLengthForPoint = 8;
   const initValue = "";
   const [currentValue, setCurrent] = useState<string>(initValue);
   const [prevValue, setPrev] = useState<string>(initValue);
-  const [savedValue, setSavedValue] = useState<string>(initValue);
+  const [savedValue, setSavedValue] = useState<string>("0");
   const [operator, setOperator] = useState<string>(initValue);
 
   const setNumber = (value: string) => {
     if (currentValue.length <= maxLength) {
-      if (value === Values.point) {
-        if (currentValue.length <= maxLengthForPoint) {
-          if (
-            !containPointRegexp.test(currentValue) &&
-            currentValue === Values.emptyString
-          ) {
-            setCurrent(`${Values.zero}${value}`);
+      switch (value) {
+        case Values.zero: {
+          if (startWithZeroRegexp.test(currentValue)) {
             return;
           }
-          setCurrent(`${currentValue}${value}`);
-        }
-      }
 
-      if (numberRegexp.test(value)) {
-        setCurrent(`${currentValue}${value}`);
-      }
-      if (value === Values.zero) {
-        if (startWithZeroRegexp.test(currentValue)) {
-          return;
-        }
+          if (currentValue === Values.emptyString) {
+            setCurrent(`${value}`);
+            return;
+          }
 
-        if (currentValue === Values.emptyString) {
-          setCurrent(`${value}`);
-          return;
+          if (currentValue !== Values.emptyString) {
+            setCurrent(`${currentValue}${value}`);
+            return;
+          }
+          break;
         }
+        case Values.point: {
+          if (currentValue.length <= maxLengthForPoint) {
+            if (
+              !containPointRegexp.test(currentValue) &&
+              currentValue === Values.emptyString
+            ) {
+              setCurrent(`${Values.zero}${value}`);
+              return;
+            }
+            if (!containPointRegexp.test(currentValue) && currentValue) {
+              setCurrent(`${currentValue}${value}`);
+              return;
+            }
+          }
+          break;
+        }
+        case Values.one:
+        case Values.two:
+        case Values.three:
+        case Values.four:
+        case Values.five:
+        case Values.six:
+        case Values.seven:
+        case Values.eight:
+        case Values.nine: {
+          if (currentValue !== Values.zero) {
+            setCurrent(`${currentValue}${value}`);
+          } else {
+            setCurrent(`${value}`);
+          }
 
-        if (currentValue !== Values.emptyString) {
-          setCurrent(`${currentValue}${value}`);
-          return;
+          break;
         }
       }
     }
   };
   const calculate = () => {
-    const current = parseFloat(currentValue);
-    const prev = parseFloat(prevValue);
-
-    const res = eval(`${prev}${operator}${current}`);
-    setCurrent(res.toString());
+    const res = eval(`${prevValue}${operator}${currentValue}`);
+    res.toString();
+    setCurrent(res);
     setOperator(Values.emptyString);
     setPrev(Values.emptyString);
   };
 
-  const clickHandler = (type: string, value?: string) => {
-    if (type === ButtonTypes.number && value) {
-      setNumber(value);
-    }
-    if (type === ButtonTypes.operator && value) {
-      setOperator(value);
-      setPrev(currentValue);
-      setCurrent(Values.emptyString);
-    }
-    if (type === ButtonTypes.clearAll) {
-      setCurrent(Values.emptyString);
-      setPrev(Values.emptyString);
-      setOperator(Values.emptyString);
-    }
-    if (type === ButtonTypes.changeSign)
-      setCurrent((curent) => `${parseFloat(curent) * -1}`);
-    if (type === ButtonTypes.percentage)
-      setCurrent((curent) => `${parseFloat(curent) * 0.01}`);
-    if (type === ButtonTypes.memoryAdd) {
-      setSavedValue(() => {
-        return savedValue !== Values.emptyString
-          ? `${parseFloat(savedValue) + parseFloat(currentValue)}`
-          : `${currentValue ? currentValue : Values.zero}`;
-      });
-    }
-
-    if (type === ButtonTypes.memorySubstract)
-      setSavedValue(
-        (saved) => `${parseFloat(saved) - parseFloat(currentValue)}`
-      );
-    if (type === ButtonTypes.memoryRead) setCurrent(savedValue);
-    if (type === ButtonTypes.memoryClear) setSavedValue(Values.emptyString);
-    if (type === ButtonTypes.equal) {
-      calculate();
-    }
+  const clickHandler = (type: EventType, value?: string) => {
+    const types: iEventKeyTypes = {
+      [ButtonTypes.number]: () => setNumber(value!),
+      [ButtonTypes.equal]: () => calculate(),
+      [ButtonTypes.operator]: () => {
+        setOperator(value!);
+        setPrev(currentValue);
+        setCurrent(Values.emptyString);
+      },
+      [ButtonTypes.memoryClear]: () => setSavedValue(Values.emptyString),
+      [ButtonTypes.memoryRead]: () => setCurrent(savedValue),
+      [ButtonTypes.memorySubstract]: () =>
+        setSavedValue(
+          (saved) => `${parseFloat(saved) - parseFloat(currentValue)}`
+        ),
+      [ButtonTypes.memoryAdd]: () =>
+        setSavedValue(
+          (saved) => `${parseFloat(saved) + parseFloat(currentValue)}`
+        ),
+      [ButtonTypes.changeSign]: () =>
+        setCurrent((current) =>
+          current !== Values.emptyString ? `${parseFloat(current) * -1}` : ""
+        ),
+      [ButtonTypes.percentage]: () =>
+        setCurrent((current) =>
+          current !== Values.emptyString ? `${parseFloat(current) * 0.01}` : ""
+        ),
+      [ButtonTypes.clearAll]: () => {
+        setCurrent(Values.emptyString);
+        setPrev(Values.emptyString);
+        setOperator(Values.emptyString);
+      },
+    };
+    const click = types[type];
+    click();
   };
 
   return {
