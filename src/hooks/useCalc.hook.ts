@@ -22,7 +22,7 @@ export const useCalc = (): T => {
     if (currentValue.length <= maxLength) {
       switch (value) {
         case Values.zero: {
-          if (startWithZeroRegexp.test(currentValue)) {
+          if (currentValue === Values.zero) {
             return;
           }
 

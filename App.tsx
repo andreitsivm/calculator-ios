@@ -18,7 +18,9 @@ const App: React.FC = () => {
               {currentValue === Values.emptyString ? Values.zero : currentValue}
             </Text>
           </View>
-          <Keyboard />
+          <View style={styles.keyboard}>
+            <Keyboard />
+          </View>
         </SafeAreaView>
       </View>
     </AppContext.Provider>

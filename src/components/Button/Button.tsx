@@ -14,18 +14,21 @@ interface Props {
 const width = Dimensions.get("window").width * 0.25;
 
 const Button: React.FC<Props> = ({ symbol, color, onPress, doubled }) => {
+  const colorStyle = StyleSheet.create({
+    color: {
+      backgroundColor: color,
+    },
+  });
+  const buttonStyles = [
+    styles.button,
+    doubled && styles.double,
+    colorStyle.color,
+  ];
+  const textStyles = [styles.text, doubled && styles.doubleText];
+
   return (
-    <TouchableOpacity
-      style={[
-        styles.button,
-        { backgroundColor: color },
-        doubled ? styles.double : null,
-      ]}
-      onPress={onPress}
-    >
-      <Text style={[styles.text, doubled ? { paddingLeft: 40 } : null]}>
-        {symbol}
-      </Text>
+    <TouchableOpacity style={buttonStyles} onPress={onPress}>
+      <Text style={textStyles}>{symbol}</Text>
     </TouchableOpacity>
   );
 };
@@ -46,6 +49,9 @@ const styles = StyleSheet.create({
     width: width * 0.5 - 10,
     flex: 2,
     alignItems: "flex-start",
+  },
+  doubleText: {
+    paddingLeft: 40,
   },
 });
 export default Button;
